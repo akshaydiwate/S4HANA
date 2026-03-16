@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surprise for SAHANA</title>
+    <style>
+        :root {
+            --neon-blue: #00ffff;
+            --neon-pink: #ff00ff;
+            --magic-gold: #ffea00;
+        }
+
+        * { box-sizing: border-box; }
+        html, body {
+            height: 100%; margin: 0; padding: 0;
+            background: #000; color: white;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* ---------- TWINKLING STARS BACKGROUND ---------- */
+        .stars-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; background: #000; overflow: hidden;
+        }
+
+        .star {
+            position: absolute; background: white; border-radius: 50%;
+            opacity: 0; animation: twinkle var(--duration) infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.1; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* ---------- LAYOUT ---------- */
+        body { scroll-snap-type: y mandatory; }
+        section { 
+            height: 100vh; width: 100%; position: relative; 
+            scroll-snap-align: start; display: flex;
+            flex-direction: column; justify-content: center;
+            align-items: center; padding: 20px;
+        }
+
+        /* ---------- HERO ---------- */
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink), var(--neon-blue));
+            background-size: 200%; -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; animation: shine 4s linear infinite;
+        }
+        @keyframes shine { to { background-position: 200%; } }
+
+        /* ---------- GAME SECTION ---------- */
+        .canvas-container { position: relative; flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; }
+        #gameCanvas { max-width: 90vw; max-height: 55vh; border-radius: 50%; background: rgba(0,0,0,0.5); }
+        
+        .play-btn {
+            position: absolute; padding: 20px 45px; font-size: 24px;
+            background: var(--neon-pink); color: white; border: none;
+            border-radius: 50px; cursor: pointer; z-index: 10;
+            box-shadow: 0 0 30px var(--neon-pink);
+        }
+
+        .msg-area { height: 150px; text-align: center; display: flex; align-items: center; justify-content: center; }
+        .magic-msg { opacity: 0; transform: translateY(20px); transition: 1s; }
+        .magic-msg.show { opacity: 1; transform: translateY(0); }
+        .magic-msg h2 { color: var(--magic-gold); font-size: 3rem; text-shadow: 0 0 15px var(--magic-gold); margin: 0; }
+        .magic-msg p { font-size: 1.3rem; margin-top: 10px; }
+
+        /* ---------- SURPRISE SECTION ---------- */
+        .surprise { display: none; opacity: 0; transition: 1.5s; text-align: center; }
+        .surprise.show { display: flex; opacity: 1; }
+
+        .photo-wrapper {
+            width: clamp(260px, 35vh, 320px); height: clamp(260px, 35vh, 320px);
+            border-radius: 50%; border: 6px solid var(--neon-blue);
+            box-shadow: 0 0 40px var(--neon-blue); overflow: hidden; margin: 15px 0;
+        }
+        .photo-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+
+        .birthday-text { font-size: 2.5rem; text-shadow: 0 0 20px var(--neon-pink); }
+
+        .music-btn {
+            margin-top: 20px; padding: 15px 30px; background: var(--magic-gold);
+            color: black; border: none; border-radius: 30px; cursor: pointer;
+            font-weight: bold; font-size: 18px; box-shadow: 0 0 20px var(--magic-gold);
+        }
+
+        .ribbon { position: absolute; width: 8px; height: 16px; animation: fall linear infinite; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+    </style>
+</head>
+<body>
+
+<div class="stars-wrapper" id="starsBg"></div>
+
+<section class="hero">
+    <h1>✨ Surprise for SAHANA ✨</h1>
+    <p style="color: var(--neon-blue); font-weight: bold; letter-spacing: 2px;">SCROLL DOWN</p>
+</section>
+
+<section class="game-section">
+    <div class="canvas-container">
+        <button class="play-btn" id="playBtn">Launch Stars</button>
+        <canvas id="gameCanvas"></canvas>
+    </div>
+    <div class="msg-area">
+        <div class="magic-msg" id="magicMsg">
+            <h2>Total stars: 1603</h2>
+            <p>Plot twist: 1603 was always about you.</p>
+        </div>
+    </div>
+</section>
+
+<section class="surprise" id="surprise">
+    <div style="font-size: 60px;">🎂</div>
+    <div class="photo-wrapper">
+        <img src=".\s4hana.png" alt="Sahana">
+    </div>
+    <div class="birthday-text">Happy Birthday SAHANA! 🎉</div>
+    <button class="music-btn" id="musicBtn">🎵 Play Me</button>
+</section>
+
+<script>
+// --- TWINKLING STARS GENERATOR ---
+const starsBg = document.getElementById('starsBg');
+for (let i = 0; i < 150; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    const size = Math.random() * 3 + 'px';
+    star.style.width = size; star.style.height = size;
+    star.style.left = Math.random() * 100 + 'vw';
+    star.style.top = Math.random() * 100 + 'vh';
+    star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+    star.style.animationDelay = Math.random() * 5 + 's';
+    starsBg.appendChild(star);
+}
+
+// --- GAME LOGIC ---
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const playBtn = document.getElementById("playBtn");
+const magicMsg = document.getElementById("magicMsg");
+const surprise = document.getElementById("surprise");
+
+canvas.width = 1000; canvas.height = 1000;
+const centerX = 500, centerY = 500, boundaryRadius = 470;
+const TARGET = 1603;
+let balls = [];
+let animationStarted = false, ended = false;
+let collisionPairs = new Set();
+
+class Ball {
+    constructor(x, y, id) {
+        this.id = id; this.x = x; this.y = y;
+        const angle = Math.random() * Math.PI * 2;
+        this.speed = 7;
+        this.dx = Math.cos(angle) * this.speed; this.dy = Math.sin(angle) * this.speed;
+        this.radius = 10;
+        this.color = `hsl(${Math.random() * 360}, 100%, 75%)`;
+    }
+    draw() {
+        ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color; ctx.shadowBlur = 10; ctx.shadowColor = this.color;
+        ctx.fill(); ctx.shadowBlur = 0;
+    }
+    update() {
+        this.x += this.dx; this.y += this.dy;
+        let d = Math.hypot(this.x - centerX, this.y - centerY);
+        if (d + this.radius >= boundaryRadius) {
+            let a = Math.atan2(this.y - centerY, this.x - centerX);
+            this.dx = -Math.cos(a + (Math.random()-0.5)*0.3) * this.speed;
+            this.dy = -Math.sin(a + (Math.random()-0.5)*0.3) * this.speed;
+            this.x = centerX + (boundaryRadius - this.radius - 2) * Math.cos(a);
+            this.y = centerY + (boundaryRadius - this.radius - 2) * Math.sin(a);
+        }
+    }
+}
+
+function handlePhysics() {
+    let currentPairs = new Set();
+    for (let i = 0; i < balls.length; i++) {
+        for (let j = i + 1; j < balls.length; j++) {
+            let b1 = balls[i], b2 = balls[j];
+            if (Math.hypot(b1.x - b2.x, b1.y - b2.y) < b1.radius + b2.radius) {
+                let pair = `${i}-${j}`; currentPairs.add(pair);
+                if (!collisionPairs.has(pair)) {
+                    [b1.dx, b2.dx] = [b2.dx, b1.dx]; [b1.dy, b2.dy] = [b2.dy, b1.dy];
+                    if (balls.length < TARGET) {
+                        let a = Math.random() * Math.PI * 2, d = Math.random() * (boundaryRadius - 60);
+                        balls.push(new Ball(centerX + d * Math.cos(a), centerY + d * Math.sin(a), balls.length));
+                    }
+                }
+            }
+        }
+    }
+    collisionPairs = currentPairs;
+}
+
+playBtn.addEventListener("click", () => {
+    playBtn.style.display = "none"; animationStarted = true;
+    balls.push(new Ball(centerX - 100, centerY, 0), new Ball(centerX + 100, centerY, 1));
+    animate();
+});
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath(); ctx.arc(centerX, centerY, boundaryRadius, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(0, 255, 255, 0.4)"; ctx.lineWidth = 12; ctx.stroke();
+    balls.forEach(b => { b.update(); b.draw(); });
+    handlePhysics();
+    if (balls.length >= TARGET && !ended) {
+        ended = true; magicMsg.classList.add('show');
+        setTimeout(() => {
+            surprise.style.display = 'flex';
+            for(let i=0; i<60; i++) createRibbon();
+            setTimeout(() => { surprise.classList.add('show'); surprise.scrollIntoView({behavior:'smooth'}); }, 100);
+        }, 4000);
+    }
+    requestAnimationFrame(animate);
+}
+
+function createRibbon() {
+    const r = document.createElement('div'); r.className = 'ribbon';
+    r.style.left = Math.random() * 100 + 'vw';
+    r.style.background = `hsl(${Math.random()*360},100%,70%)`;
+    r.style.animationDuration = (Math.random()*3+2)+'s';
+    surprise.appendChild(r);
+}
+
+// --- FULL BIRTHDAY MELODY ENGINE ---
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const melody = [
+    {f: 261.6, d: 0.4}, {f: 261.6, d: 0.2}, {f: 293.7, d: 0.6}, {f: 261.6, d: 0.6}, {f: 349.2, d: 0.6}, {f: 329.6, d: 1.2}, // Happy Birthday to you
+    {f: 261.6, d: 0.4}, {f: 261.6, d: 0.2}, {f: 293.7, d: 0.6}, {f: 261.6, d: 0.6}, {f: 392.0, d: 0.6}, {f: 349.2, d: 1.2}, // Happy Birthday to you
+    {f: 261.6, d: 0.4}, {f: 261.6, d: 0.2}, {f: 523.3, d: 0.6}, {f: 440.0, d: 0.6}, {f: 349.2, d: 0.6}, {f: 329.6, d: 0.6}, {f: 293.7, d: 1.2}, // Happy Birthday dear Sahana
+    {f: 466.2, d: 0.4}, {f: 466.2, d: 0.2}, {f: 440.0, d: 0.6}, {f: 349.2, d: 0.6}, {f: 392.0, d: 0.6}, {f: 349.2, d: 1.2}  // Happy Birthday to you
+];
+
+document.getElementById('musicBtn').addEventListener('click', () => {
+    let now = audioCtx.currentTime;
+    melody.forEach(note => {
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.frequency.value = note.f;
+        g.gain.setValueAtTime(0.1, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + note.d - 0.05);
+        osc.connect(g); g.connect(audioCtx.destination);
+        osc.start(now); osc.stop(now + note.d);
+        now += note.d;
+    });
+});
+</script>
+</body>
+</html>
